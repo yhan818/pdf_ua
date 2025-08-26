@@ -5,22 +5,24 @@
 #
 # DESCRIPTION:
 # This script processes PDF files to make them PDF/UA compliant. (not 100% yet)
-# from an input folder by performing the
-# following actions:
+# from an input folder by performing the following actions:
 #   1. Renders each page as a compressed JPEG image to reduce file size.
 #   2. Performs Optical Character Recognition (OCR) on the image to extract text.
 #   3. Creates a new PDF with the compressed image and an invisible text layer on top.
 #   4. Sets basic document metadata (Title, Author, Language).
 #   5. Adds a compliant XMP metadata stream and a PDF/UA identifier to improve
 #      accessibility and standards compliance.
-#
+#   6. More to do to fix the rest of PDF/UA compliance issues.
+#   7. This script is a work in progress and will be updated as needed.
+#   8. This script is not perfect and may not work for all PDFs. (random manual reveiws needed at the stage)
+#   
 # LIBRARIES REQUIRED:
 # - PyMuPDF (fitz): pip install PyMuPDF
 # - Pillow (PIL): pip install Pillow
 # - pytesseract: pip install pytesseract
 # - pikepdf: pip install pikepdf
 # - Tesseract OCR Engine: Must be installed on your system.
-#  Author: Yan Han
+#  Author: Yan Han with help from Gemini 2.5 Pro and GPT-4o
 #  Date: 2025-08-26
 #  Version: 1.0
 #  License: MIT
