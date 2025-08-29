@@ -141,32 +141,41 @@ def add_xmp_metadata_and_markinfo(pdf_path, doc_title, author, subject, keywords
     except Exception as e:
         print(f"      -> ERROR: Failed to add XMP metadata with pikepdf: {e}")
 
+
 def process_all_pdfs():
     """
-    Finds all PDF files in the INPUT_FOLDER, processes them one by one,
-    and saves them to the OUTPUT_FOLDER.
+    Finds all PDF files in the INPUT_FOLDER and its subdirectories, 
+    processes them, and saves them to the OUTPUT_FOLDER with the same
+    directory structure and filename.
     """
-    # Loop through every file in the specified input folder.
-    for filename in os.listdir(INPUT_FOLDER):
-        # Check if the file is a PDF (case-insensitive).
-        if filename.lower().endswith(".pdf"):
-            input_path = os.path.join(INPUT_FOLDER, filename)
-            output_path = os.path.join(OUTPUT_FOLDER, f"pdfua_ocr_{filename}")
+    for root, dirs, files in os.walk(INPUT_FOLDER):
+        for filename in files:
+            if filename.lower().endswith(".pdf"):
+                input_path = os.path.join(root, filename)
+                
+                # Determine the relative path to maintain the directory structure
+                relative_path = os.path.relpath(root, INPUT_FOLDER)
+                output_dir = os.path.join(OUTPUT_FOLDER, relative_path)
+                
+                # Create the subdirectory in the output folder if it doesn't exist
+                os.makedirs(output_dir, exist_ok=True)
+                
+                # The output path will have the same filename in the new structure
+                output_path = os.path.join(output_dir, filename)
 
-            print(f"🔍 Starting processing for: {filename}")
-            try:
-                # STEP 1: Create the main OCR'd and compressed PDF using PyMuPDF.
-                # This function returns the metadata that was set.
-                doc_title, author, subject, keywords = create_ocr_compressed_pdf(input_path, output_path)
+                print(f"🔍 Starting processing for: {input_path}")
+                try:
+                    doc_title, author, subject, keywords = create_ocr_compressed_pdf(input_path, output_path)
+                    add_xmp_metadata_and_markinfo(output_path, doc_title, author, subject, keywords)
+                    print(f"✅ Successfully processed and saved to: {output_path}")
+                except Exception as e:
+                    print(f"❌ Error processing {filename}: {e}")
 
-                # STEP 2: Post-process the newly created PDF to add compliant
-                # XMP metadata and accessibility identifiers using pikepdf.
-                add_xmp_metadata_and_markinfo(output_path, doc_title, author, subject, keywords)
 
-                print(f"✅ Successfully processed and saved to: {output_path}")
-            except Exception as e:
-                # Catch any errors during the process and report them.
-                print(f"❌ Error processing {filename}: {e}")
+
+
+
+
 
 def create_ocr_compressed_pdf(input_path, output_path):
     """

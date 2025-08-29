@@ -1,2 +1,7 @@
 out/
 __pycache__/
+
+
+# Ignore input and put dirs
+input_pdfs/
+output_pdfs/
